@@ -262,9 +262,6 @@
         .control-icon { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; opacity: 0.8; flex-shrink: 0; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* ═══════════════════════════════════════
-           ██  MOBILE
-           ═══════════════════════════════════════ */
         @media screen and (max-width: 768px) {
             #sidebar {
                 position: fixed !important; top: auto !important; bottom: 0 !important;
@@ -371,7 +368,6 @@
 </head>
 <body>
 
-    <!-- ═══ LOADING SCREEN ═══ -->
     <div id="loadingScreen">
         <div class="loader-title">Loading</div>
         <div class="loader-bar-container">
@@ -381,9 +377,9 @@
     </div>
 
     <div id="worldSwitcher" class="glass">
-        <div class="world-dot active" data-world="tlou" data-tooltip="The Last of Us"></div>
+        <div class="world-dot" data-world="tlou" data-tooltip="The Last of Us"></div>
         <div class="world-separator"></div>
-        <div class="world-dot" data-world="er" data-tooltip="Elden Ring"></div>
+        <div class="world-dot active" data-world="er" data-tooltip="Elden Ring"></div>
         <div class="world-separator"></div>
         <div class="world-dot" data-world="cb" data-tooltip="Cyberpunk 2077"></div>
         <div class="world-separator"></div>
@@ -391,8 +387,8 @@
     </div>
 
     <div class="background-container" id="bgContainer">
-        <div id="bgBottom" class="bg-layer" style="background-image: url('tlouhome.jpg');"></div>
-        <div id="bgTop"    class="bg-layer"></div>
+        <div id="bgBottom" class="bg-layer" style="background-image: url('erhome.png');"></div>
+        <div id="bgTop" class="bg-layer"></div>
     </div>
 
     <canvas id="particleCanvas"></canvas>
@@ -479,8 +475,8 @@
     <div id="musicPlayer" class="glass">
         <div class="disc-container"><div class="disc-image" id="discImage"></div></div>
         <div class="music-info">
-            <div class="track-name" id="trackName">The Last of Us</div>
-            <div class="track-artist" id="trackArtist">Gustavo Santaolalla</div>
+            <div class="track-name" id="trackName">Elden Ring</div>
+            <div class="track-artist" id="trackArtist">Tsukasa Saitoh</div>
         </div>
         <div class="control-icon">
             <svg id="iconPlay" viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
@@ -488,15 +484,12 @@
         </div>
     </div>
 
-    <audio id="myAudio" loop><source id="audioSource" src="musique.mp3" type="audio/mpeg"></audio>
+    <audio id="myAudio" loop><source id="audioSource" src="musique2.mp3" type="audio/mpeg"></audio>
 
     <script>
         const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         const isMobile = () => window.innerWidth <= 768;
 
-        // ══════════════════════════════════════
-        //  WORLDS CONFIG
-        // ══════════════════════════════════════
         const worlds = {
             tlou: {
                 label: 'The Last of Us',
@@ -520,11 +513,8 @@
             }
         };
 
-        let currentWorld = 'tlou';
+        let currentWorld = 'er';
 
-        // ══════════════════════════════════════
-        //  DATA
-        // ══════════════════════════════════════
         const projects = [
             { number: '01', status: '', title: 'VR & Artificial Intelligence', desc: '<strong>[L1]</strong> Group presentation on VR and AI.' },
             { number: '02', status: '', title: 'Video Game (UE5)', desc: '<strong>[L1]</strong> 3D puzzle/horror escape room.' },
@@ -557,25 +547,15 @@
             { title: "Lord of the Mysteries", rating: "9/10", status: "En cours", cover: "https://i.pinimg.com/736x/33/58/20/335820b3572deabb95fc2aa667cfb373.jpg" }
         ];
 
-        // ══════════════════════════════════════
-        //  IMAGE PRELOADER
-        // ══════════════════════════════════════
         function collectAllImageUrls() {
             const urls = new Set();
-
-            // All world backgrounds + disc images
             Object.values(worlds).forEach(w => {
                 Object.values(w.backgrounds).forEach(url => urls.add(url));
                 urls.add(w.discImage);
             });
-
-            // All media covers
             videoGames.forEach(g => urls.add(g.cover));
             mediaList.forEach(m => urls.add(m.cover));
-
-            // Profile photo
             urls.add('rayan.jpg');
-
             return [...urls];
         }
 
@@ -601,18 +581,14 @@
                 allUrls.forEach(url => {
                     const img = new Image();
                     img.onload = onDone;
-                    img.onerror = onDone; // don't block on broken images
+                    img.onerror = onDone;
                     img.src = url;
                 });
 
-                // Safety timeout — don't wait more than 15s
                 setTimeout(resolve, 15000);
             });
         }
 
-        // ══════════════════════════════════════
-        //  BUILD CARDS
-        // ══════════════════════════════════════
         const projectsGrid = document.getElementById('projectsGrid');
         projects.forEach(p => {
             const card = document.createElement('div');
@@ -637,9 +613,6 @@
         buildCards(videoGames, 'vgGrid');
         buildCards(mediaList, 'mediaGrid');
 
-        // ══════════════════════════════════════
-        //  BACKGROUND ENGINE
-        // ══════════════════════════════════════
         const bgBottom = document.getElementById('bgBottom');
         const bgTop = document.getElementById('bgTop');
         const bgContainer = document.getElementById('bgContainer');
@@ -661,31 +634,28 @@
         function resetLayerInstant(el, s) { el.style.transition='none'; Object.assign(el.style,s); el.offsetHeight; el.style.transition=''; }
 
         function runTransition(url, onMid) {
-            running=true; pendingUrl=null; pendingCb=null;
-            resetLayerInstant(bgTop, {opacity:'0',transform:'scale(1.08)',backgroundImage:`url('${url}')`});
-            requestAnimationFrame(()=>{
-                const e='cubic-bezier(0.25,0.46,0.45,0.94)';
-                const t=`opacity ${DURATION}ms ${e}, transform ${DURATION}ms ${e}`;
-                applyStyles(bgBottom,{transition:t,opacity:'0',transform:'scale(1.06)'});
-                applyStyles(bgTop,{transition:t,opacity:'1',transform:'scale(1)'});
-                if(onMid) setTimeout(onMid,DURATION/2);
-                setTimeout(()=>{
-                    resetLayerInstant(bgBottom,{opacity:'1',transform:'scale(1)',backgroundImage:`url('${url}')`});
-                    resetLayerInstant(bgTop,{opacity:'0',transform:'scale(1.08)',backgroundImage:''});
-                    running=false;
-                    if(pendingUrl) runTransition(pendingUrl,pendingCb);
-                },DURATION);
+            running = true; pendingUrl = null; pendingCb = null;
+            resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:`url('${url}')`});
+            requestAnimationFrame(() => {
+                const e = 'cubic-bezier(0.25,0.46,0.45,0.94)';
+                const t = `opacity ${DURATION}ms ${e}, transform ${DURATION}ms ${e}`;
+                applyStyles(bgBottom, {transition:t, opacity:'0', transform:'scale(1.06)'});
+                applyStyles(bgTop, {transition:t, opacity:'1', transform:'scale(1)'});
+                if (onMid) setTimeout(onMid, DURATION / 2);
+                setTimeout(() => {
+                    resetLayerInstant(bgBottom, {opacity:'1', transform:'scale(1)', backgroundImage:`url('${url}')`});
+                    resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:''});
+                    running = false;
+                    if (pendingUrl) runTransition(pendingUrl, pendingCb);
+                }, DURATION);
             });
         }
 
-        function changeBackground(url,onMid) {
-            if(running){pendingUrl=url;pendingCb=onMid;return;}
-            runTransition(url,onMid);
+        function changeBackground(url, onMid) {
+            if (running) { pendingUrl = url; pendingCb = onMid; return; }
+            runTransition(url, onMid);
         }
 
-        // ══════════════════════════════════════
-        //  NAVIGATION
-        // ══════════════════════════════════════
         const navLinks = document.querySelectorAll('.nav-menu a');
         const panels = {
             navAbout: document.getElementById('aboutContent'),
@@ -733,9 +703,6 @@
 
         heroText.style.opacity = '1';
 
-        // ══════════════════════════════════════
-        //  WORLD SWITCHER
-        // ══════════════════════════════════════
         const worldDots = document.querySelectorAll('.world-dot');
         const audio = document.getElementById('myAudio');
         const audioSource = document.getElementById('audioSource');
@@ -747,16 +714,25 @@
             if (key === currentWorld) return;
             currentWorld = key;
             const w = worlds[key];
+
             worldDots.forEach(d => d.classList.remove('active'));
             document.querySelector(`[data-world="${key}"]`).classList.add('active');
+
             const wasPlaying = !audio.paused;
-            audioSource.src = w.music; audio.load();
-            if (wasPlaying) audio.play().catch(()=>{});
+            audioSource.src = w.music;
+            audio.load();
+            if (wasPlaying) audio.play().catch(() => {});
+
             trackNameEl.textContent = w.trackName;
             trackArtistEl.textContent = w.trackArtist;
             discImage.style.backgroundImage = `url('${w.discImage}')`;
-            hideAll(); pendingCb = null; pendingUrl = null;
+
+            hideAll();
+            pendingCb = null;
+            pendingUrl = null;
+
             const bgUrl = w.backgrounds[currentPage] || w.backgrounds.navHome;
+
             if (currentPage === 'navHome') {
                 changeBackground(bgUrl, () => { if (currentPage === 'navHome') heroText.style.opacity = '1'; });
             } else if (panels[currentPage]) {
@@ -768,9 +744,6 @@
 
         worldDots.forEach(d => d.addEventListener('click', () => switchWorld(d.dataset.world)));
 
-        // ══════════════════════════════════════
-        //  AUDIO
-        // ══════════════════════════════════════
         const musicPlayer = document.getElementById('musicPlayer');
         const iconPlay = document.getElementById('iconPlay');
         const iconPause = document.getElementById('iconPause');
@@ -778,77 +751,88 @@
         function updatePlayIcon() {
             if (audio.paused) {
                 discImage.classList.remove('playing');
-                iconPlay.style.display = 'block'; iconPause.style.display = 'none';
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
             } else {
                 discImage.classList.add('playing');
-                iconPlay.style.display = 'none'; iconPause.style.display = 'block';
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
             }
         }
 
         audio.addEventListener('play', updatePlayIcon);
         audio.addEventListener('pause', updatePlayIcon);
         musicPlayer.addEventListener('click', () => {
-            if (audio.paused) audio.play().catch(()=>{}); else audio.pause();
+            if (audio.paused) audio.play().catch(() => {});
+            else audio.pause();
             updatePlayIcon();
         });
 
-        // ══════════════════════════════════════
-        //  PARTICLES
-        // ══════════════════════════════════════
         const canvasEl = document.getElementById('particleCanvas');
         const ctx = canvasEl.getContext('2d');
-        function resizeCanvas() { canvasEl.width = window.innerWidth * 1.1; canvasEl.height = window.innerHeight * 1.1; }
+
+        function resizeCanvas() {
+            canvasEl.width = window.innerWidth * 1.1;
+            canvasEl.height = window.innerHeight * 1.1;
+        }
+
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
         class Particle {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvasEl.width; this.y = Math.random() * canvasEl.height;
-                this.size = Math.random() * 2 + 0.5; this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2; this.opacity = Math.random() * 0.5 + 0.1;
+                this.x = Math.random() * canvasEl.width;
+                this.y = Math.random() * canvasEl.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.5 + 0.1;
             }
-            draw() { ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
+            draw() {
+                ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
             update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x<0) this.x=canvasEl.width; if (this.x>canvasEl.width) this.x=0;
-                if (this.y<0) this.y=canvasEl.height; if (this.y>canvasEl.height) this.y=0;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvasEl.width;
+                if (this.x > canvasEl.width) this.x = 0;
+                if (this.y < 0) this.y = canvasEl.height;
+                if (this.y > canvasEl.height) this.y = 0;
             }
         }
 
         const count = isTouchDevice ? 120 : 400;
-        const particles = Array.from({length:count}, () => new Particle());
-        function animate() { ctx.clearRect(0,0,canvasEl.width,canvasEl.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
+        const particles = Array.from({ length: count }, () => new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
         animate();
 
-        // Prevent pull-to-refresh
         document.addEventListener('touchmove', (e) => {
             if (e.target.closest('.content-panel') || e.target.closest('.nav-menu')) return;
             e.preventDefault();
         }, { passive: false });
 
-        // ══════════════════════════════════════
-        //  INIT — PRELOAD THEN SHOW
-        // ══════════════════════════════════════
         async function init() {
             discImage.style.backgroundImage = `url('${worlds[currentWorld].discImage}')`;
-
-            // Preload all images
             await preloadAllImages();
-
-            // Hide loading screen
             document.getElementById('loadingScreen').classList.add('hidden');
 
-            // Start music after user gesture or immediately
             audio.play().then(updatePlayIcon).catch(() => {
                 document.addEventListener('click', function firstClick() {
-                    audio.play().then(updatePlayIcon).catch(()=>{});
+                    audio.play().then(updatePlayIcon).catch(() => {});
                     document.removeEventListener('click', firstClick);
                 }, { once: true });
             });
         }
 
-        // Run on load
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
