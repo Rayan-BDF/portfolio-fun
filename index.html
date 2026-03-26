@@ -19,6 +19,59 @@
         html { overflow: hidden; height: 100%; }
         body { height: 100%; width: 100%; overflow: hidden; color: white; background-color: #050505; position: fixed; top: 0; left: 0; right: 0; bottom: 0; }
 
+        /* ═══════════════════════════════════════
+           ██  LOADING SCREEN
+           ═══════════════════════════════════════ */
+        #loadingScreen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            background: #050505;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #loadingScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-title {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .loader-bar-container {
+            width: 200px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .loader-percent {
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+
         .background-container {
             position: absolute;
             top: -3vh; left: -3vw;
@@ -53,103 +106,68 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
         }
 
-        /* ── World Switcher ── */
         #worldSwitcher {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 30px;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 30; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 30px;
         }
 
         .world-dot {
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.3);
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3); background: transparent;
+            cursor: pointer; transition: all 0.3s ease; position: relative;
         }
-
         .world-dot:hover { border-color: rgba(255,255,255,0.7); transform: scale(1.15); }
-
-        .world-dot.active {
-            border-color: white; background: white;
-            box-shadow: 0 0 10px rgba(255,255,255,0.4);
-        }
-
+        .world-dot.active { border-color: white; background: white; box-shadow: 0 0 10px rgba(255,255,255,0.4); }
         .world-dot::after {
-            content: attr(data-tooltip);
-            position: absolute; top: 24px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 9px; font-weight: bold; letter-spacing: 2px;
-            text-transform: uppercase; white-space: nowrap;
+            content: attr(data-tooltip); position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap;
             opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
             color: rgba(255,255,255,0.7); text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
-
         .world-dot:hover::after { opacity: 1; }
+        .world-separator { width: 1px; height: 14px; background: rgba(255,255,255,0.15); margin: 0 4px; }
 
-        .world-separator {
-            width: 1px; height: 14px;
-            background: rgba(255,255,255,0.15); margin: 0 4px;
-        }
-
-        /* ── Desktop Sidebar ── */
         #sidebar {
             position: absolute; top: 50%; transform: translateY(-50%); left: 30px;
             width: var(--sidebar-width); padding: var(--sidebar-padding);
-            height: fit-content; border-radius: 30px;
-            display: flex; flex-direction: column; z-index: 20;
+            height: fit-content; border-radius: 30px; display: flex; flex-direction: column; z-index: 20;
         }
 
         .nav-menu { display: flex; flex-direction: column; gap: 8px; list-style: none; }
-
         .nav-menu li a {
             color: white; text-decoration: none; font-size: 13px; text-transform: uppercase;
             letter-spacing: 2px; opacity: 0.5; font-weight: bold;
             display: block; padding: var(--link-padding); border-radius: 15px; transition: all 0.3s ease;
         }
+        .nav-menu li a:hover, .nav-menu li a.active { opacity: 1; background: rgba(255,255,255,0.1); transform: translateX(10px); }
 
-        .nav-menu li a:hover, .nav-menu li a.active {
-            opacity: 1; background: rgba(255, 255, 255, 0.1); transform: translateX(10px);
-        }
-
-        /* ── Hero Text ── */
         #heroText {
             position: absolute; top: 30%; right: 80px; transform: translateY(-50%);
             z-index: 15; display: flex; flex-direction: column; align-items: flex-end;
             gap: 4px; pointer-events: none; transition: opacity 0.6s ease;
         }
-
         #heroText span {
             display: block; font-weight: 800; font-size: clamp(38px, 5.5vw, 72px);
             letter-spacing: 6px; text-transform: uppercase; line-height: 1.05;
-            color: rgba(255, 255, 255, 0.15); -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.15); -webkit-text-stroke: 1px rgba(255,255,255,0.4);
         }
 
-        /* ── UI Wrapper ── */
         .ui-wrapper {
             position: absolute; top: 0; left: 280px; width: calc(100% - 280px); height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px; z-index: 10;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 10;
         }
 
         .content-panel {
             width: 95%; max-width: 1400px; height: auto;
             display: flex; flex-direction: column; padding: 25px 30px;
             border-radius: 30px; transition: all 0.4s ease-out;
-            opacity: 0; pointer-events: none; transform: translateY(20px);
-            position: absolute;
+            opacity: 0; pointer-events: none; transform: translateY(20px); position: absolute;
         }
-
         .content-panel.visible { opacity: 1; pointer-events: auto; transform: translateY(0); z-index: 15; }
+        .content-panel::-webkit-scrollbar { width: 3px; }
+        .content-panel::-webkit-scrollbar-track { background: transparent; }
+        .content-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        .content-panel { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; }
 
         .section-title {
             font-size: 24px; font-weight: 800; letter-spacing: 4px;
@@ -157,13 +175,6 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* ── Scrollbar ── */
-        .content-panel::-webkit-scrollbar { width: 3px; }
-        .content-panel::-webkit-scrollbar-track { background: transparent; }
-        .content-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        .content-panel { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; }
-
-        /* ── About ── */
         .about-layout { display: flex; gap: 40px; align-items: center; width: 100%; }
         .about-photo { flex-shrink: 0; width: 200px; height: 260px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
         .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
@@ -180,7 +191,6 @@
         .about-btn { display: inline-block; padding: 10px 24px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); color: white; font-size: 12px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; transition: all 0.3s ease; user-select: none; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
         .about-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); transform: translateY(-2px); }
 
-        /* ── Projects Grid ── */
         .projects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
         .project-card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
@@ -195,9 +205,7 @@
         .project-desc { font-size: 13px; opacity: 0.9; line-height: 1.6; flex-grow: 1; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
         .project-desc strong { color: #fff; font-weight: bold; opacity: 1; }
 
-        /* ── Card Grid ── */
         .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
-
         .media-card {
             position: relative; height: 160px; border-radius: 15px; overflow: hidden;
             background-size: cover; background-position: center;
@@ -205,7 +213,6 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; cursor: pointer;
         }
         .media-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.5); }
-
         .media-rank {
             position: absolute; top: 10px; left: 10px;
             background: rgba(0,0,0,0.75); backdrop-filter: blur(5px);
@@ -213,18 +220,15 @@
             font-weight: 800; font-size: 12px; letter-spacing: 1px;
             border: 1px solid rgba(255,255,255,0.2); z-index: 2;
         }
-
         .media-info {
             position: absolute; bottom: 0; left: 0; right: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
             padding: 25px 12px 12px 12px; display: flex; flex-direction: column; gap: 2px;
         }
-
         .media-title { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .media-rating { font-size: 12px; color: #ffd700; font-weight: bold; text-shadow: 1px 1px 2px #000; }
         .media-status { font-size: 8px; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 8px; width: fit-content; text-transform: uppercase; font-weight: bold; margin-top: 2px; }
 
-        /* ── Contact ── */
         .contact-layout { display: flex; gap: 20px; width: 100%; }
         .contact-card {
             flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
@@ -240,7 +244,6 @@
         .contact-action { display: inline-block; padding: 10px 28px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: white; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; transition: all 0.3s ease; margin-top: 5px; }
         .contact-action:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); transform: translateY(-2px); }
 
-        /* ── Music Player ── */
         #musicPlayer {
             position: fixed; bottom: 30px; right: 30px;
             width: 280px; height: 60px; border-radius: 30px;
@@ -259,268 +262,123 @@
         .control-icon { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; opacity: 0.8; flex-shrink: 0; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* ═══════════════════════════════════════════════════
-           ██  MOBILE — max-width: 768px
-           ═══════════════════════════════════════════════════ */
+        /* ═══════════════════════════════════════
+           ██  MOBILE
+           ═══════════════════════════════════════ */
         @media screen and (max-width: 768px) {
-
-            /* ── Kill desktop sidebar completely ── */
             #sidebar {
-                position: fixed !important;
-                top: auto !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                transform: none !important;
-                width: 100% !important;
-                height: auto !important;
+                position: fixed !important; top: auto !important; bottom: 0 !important;
+                left: 0 !important; right: 0 !important; transform: none !important;
+                width: 100% !important; height: auto !important;
                 border-radius: 18px 18px 0 0 !important;
                 padding: 8px 8px calc(8px + var(--safe-bottom)) !important;
                 z-index: 50 !important;
-                backdrop-filter: blur(20px) !important;
-                -webkit-backdrop-filter: blur(20px) !important;
-                background: rgba(0, 0, 0, 0.6) !important;
-                border: none !important;
+                backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important;
+                background: rgba(0,0,0,0.6) !important; border: none !important;
                 border-top: 1px solid rgba(255,255,255,0.1) !important;
                 box-shadow: 0 -4px 30px rgba(0,0,0,0.5) !important;
             }
-
             .nav-menu {
-                flex-direction: row !important;
-                gap: 2px !important;
-                overflow-x: auto !important;
-                overflow-y: hidden !important;
-                -webkit-overflow-scrolling: touch;
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-                justify-content: center;
-                padding: 0 4px;
+                flex-direction: row !important; gap: 2px !important;
+                overflow-x: auto !important; overflow-y: hidden !important;
+                -webkit-overflow-scrolling: touch; scrollbar-width: none; justify-content: center;
             }
             .nav-menu::-webkit-scrollbar { display: none; }
-
             .nav-menu li { flex-shrink: 0; }
-
             .nav-menu li a {
-                font-size: 9px !important;
-                padding: 10px 12px !important;
-                letter-spacing: 1px !important;
-                white-space: nowrap !important;
-                border-radius: 12px !important;
-                text-align: center !important;
-                opacity: 0.5 !important;
+                font-size: 9px !important; padding: 10px 12px !important;
+                letter-spacing: 1px !important; white-space: nowrap !important;
+                border-radius: 12px !important; text-align: center !important; opacity: 0.5 !important;
             }
+            .nav-menu li a:hover { transform: none !important; }
+            .nav-menu li a.active { opacity: 1 !important; background: rgba(255,255,255,0.15) !important; transform: none !important; }
 
-            .nav-menu li a:hover {
-                transform: none !important;
-            }
+            #heroText { right: auto !important; left: 50% !important; top: 40% !important; transform: translate(-50%,-50%) !important; align-items: center !important; }
+            #heroText span { font-size: clamp(26px,10vw,50px) !important; letter-spacing: 4px !important; text-align: center !important; }
 
-            .nav-menu li a.active {
-                opacity: 1 !important;
-                background: rgba(255,255,255,0.15) !important;
-                transform: none !important;
-            }
+            .ui-wrapper { left: 0 !important; width: 100% !important; padding: 60px 14px 80px !important; }
 
-            /* ── Hero centered ── */
-            #heroText {
-                right: auto !important;
-                left: 50% !important;
-                top: 40% !important;
-                transform: translate(-50%, -50%) !important;
-                align-items: center !important;
-            }
-
-            #heroText span {
-                font-size: clamp(26px, 10vw, 50px) !important;
-                letter-spacing: 4px !important;
-                text-align: center !important;
-            }
-
-            /* ── Full-width content area ── */
-            .ui-wrapper {
-                left: 0 !important;
-                width: 100% !important;
-                padding: 60px 14px 80px !important;
-            }
-
-            /* ── Scrollable panels ── */
             .content-panel {
-                width: 100% !important;
-                max-width: 100% !important;
-                max-height: calc(100vh - 150px) !important;
-                max-height: calc(100dvh - 150px) !important;
-                overflow-y: auto !important;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior: contain;
-                padding: 20px 16px !important;
-                border-radius: 20px !important;
+                width: 100% !important; max-width: 100% !important;
+                max-height: calc(100vh - 150px) !important; max-height: calc(100dvh - 150px) !important;
+                overflow-y: auto !important; -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain; padding: 20px 16px !important; border-radius: 20px !important;
             }
+            .section-title { font-size: 17px !important; letter-spacing: 3px !important; margin-bottom: 16px !important; }
 
-            .section-title {
-                font-size: 17px !important;
-                letter-spacing: 3px !important;
-                margin-bottom: 16px !important;
-            }
-
-            /* ── Grids 2 cols ── */
-            .projects-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-
-            .media-card {
-                height: 140px !important;
-                border-radius: 12px !important;
-            }
-
-            .project-card {
-                padding: 14px !important;
-                border-radius: 12px !important;
-            }
+            .projects-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .card-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .media-card { height: 140px !important; border-radius: 12px !important; }
+            .project-card { padding: 14px !important; border-radius: 12px !important; }
             .project-number { font-size: 22px !important; }
             .project-title { font-size: 12px !important; }
             .project-desc { font-size: 11px !important; line-height: 1.5 !important; }
 
-            /* ── About stacked ── */
-            .about-layout {
-                flex-direction: column !important;
-                align-items: center !important;
-                text-align: center !important;
-                gap: 20px !important;
-            }
-
-            .about-photo {
-                width: 120px !important;
-                height: 160px !important;
-                border-radius: 16px !important;
-            }
-
-            .about-name {
-                font-size: 30px !important;
-                letter-spacing: 4px !important;
-            }
-
+            .about-layout { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 20px !important; }
+            .about-photo { width: 120px !important; height: 160px !important; border-radius: 16px !important; }
+            .about-name { font-size: 30px !important; letter-spacing: 4px !important; }
             .about-greeting { font-size: 11px !important; }
-
-            .about-bio p {
-                font-size: 13px !important;
-                line-height: 1.6 !important;
-            }
+            .about-bio p { font-size: 13px !important; line-height: 1.6 !important; }
             .about-bio p:first-child { font-size: 14px !important; }
+            .about-links { justify-content: center !important; flex-wrap: wrap !important; }
+            .about-btn { padding: 8px 18px !important; font-size: 10px !important; }
 
-            .about-links {
-                justify-content: center !important;
-                flex-wrap: wrap !important;
-            }
-            .about-btn {
-                padding: 8px 18px !important;
-                font-size: 10px !important;
-            }
-
-            /* ── Contact stacked ── */
-            .contact-layout {
-                flex-direction: column !important;
-                gap: 12px !important;
-            }
-
-            .contact-card {
-                padding: 20px 16px !important;
-                border-radius: 16px !important;
-                gap: 10px !important;
-            }
+            .contact-layout { flex-direction: column !important; gap: 12px !important; }
+            .contact-card { padding: 20px 16px !important; border-radius: 16px !important; gap: 10px !important; }
             .contact-value { font-size: 13px !important; }
             .contact-icon { width: 40px !important; height: 40px !important; }
             .contact-icon svg { width: 20px !important; height: 20px !important; }
-            .contact-action {
-                padding: 8px 20px !important;
-                font-size: 10px !important;
-            }
+            .contact-action { padding: 8px 20px !important; font-size: 10px !important; }
 
-            /* ── Music Player above nav ── */
             #musicPlayer {
-                bottom: calc(56px + var(--safe-bottom)) !important;
-                right: 10px !important;
-                width: 220px !important;
-                height: 48px !important;
-                border-radius: 24px !important;
-                padding: 4px 10px 4px 4px !important;
-                gap: 8px !important;
+                bottom: calc(56px + var(--safe-bottom)) !important; right: 10px !important;
+                width: 220px !important; height: 48px !important; border-radius: 24px !important;
+                padding: 4px 10px 4px 4px !important; gap: 8px !important;
             }
-
             .disc-container { width: 40px !important; height: 40px !important; }
             .track-name { font-size: 10px !important; letter-spacing: 0.5px !important; }
             .track-artist { font-size: 8px !important; }
 
-            /* ── World Switcher ── */
-            #worldSwitcher {
-                top: 12px !important;
-                padding: 6px 14px !important;
-                gap: 6px !important;
-            }
+            #worldSwitcher { top: 12px !important; padding: 6px 14px !important; gap: 6px !important; }
             .world-dot { width: 12px !important; height: 12px !important; }
             .world-separator { height: 12px !important; margin: 0 2px !important; }
         }
 
-        /* ═══════════════════════════════════════════════════
-           ██  SMALL PHONES — max-width: 400px
-           ═══════════════════════════════════════════════════ */
         @media screen and (max-width: 400px) {
-            .nav-menu li a {
-                font-size: 8px !important;
-                padding: 8px 9px !important;
-                letter-spacing: 0.5px !important;
-            }
-
-            #heroText span {
-                font-size: clamp(22px, 9vw, 40px) !important;
-                letter-spacing: 3px !important;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr !important;
-            }
-
+            .nav-menu li a { font-size: 8px !important; padding: 8px 9px !important; letter-spacing: 0.5px !important; }
+            #heroText span { font-size: clamp(22px,9vw,40px) !important; letter-spacing: 3px !important; }
+            .projects-grid { grid-template-columns: 1fr !important; }
             .media-card { height: 120px !important; }
-            .media-rank { font-size: 10px !important; padding: 3px 7px !important; top: 6px !important; left: 6px !important; }
+            .media-rank { font-size: 10px !important; padding: 3px 7px !important; }
             .media-title { font-size: 11px !important; }
-            .media-rating { font-size: 10px !important; }
             .media-info { padding: 18px 8px 8px 8px !important; }
-
             .about-photo { width: 100px !important; height: 140px !important; }
             .about-name { font-size: 26px !important; }
-
             .content-panel { padding: 16px 12px !important; }
-
-            #musicPlayer {
-                width: 190px !important;
-                height: 44px !important;
-                right: 8px !important;
-            }
+            #musicPlayer { width: 190px !important; height: 44px !important; right: 8px !important; }
             .disc-container { width: 36px !important; height: 36px !important; }
         }
 
-        /* ═══════════════════════════════════════════════════
-           ██  LANDSCAPE PHONE
-           ═══════════════════════════════════════════════════ */
         @media screen and (max-height: 500px) and (max-width: 900px) {
-            .content-panel {
-                max-height: calc(100dvh - 120px) !important;
-                max-height: calc(100vh - 120px) !important;
-            }
+            .content-panel { max-height: calc(100dvh - 120px) !important; }
             .ui-wrapper { padding: 50px 14px 70px !important; }
             #heroText { top: 45% !important; }
-            #heroText span { font-size: clamp(18px, 5vw, 30px) !important; }
+            #heroText span { font-size: clamp(18px,5vw,30px) !important; }
             .about-layout { flex-direction: row !important; gap: 16px !important; text-align: left !important; }
             .about-photo { width: 90px !important; height: 120px !important; }
-            .about-links { justify-content: flex-start !important; }
         }
     </style>
 </head>
 <body>
+
+    <!-- ═══ LOADING SCREEN ═══ -->
+    <div id="loadingScreen">
+        <div class="loader-title">Loading</div>
+        <div class="loader-bar-container">
+            <div class="loader-bar" id="loaderBar"></div>
+        </div>
+        <div class="loader-percent" id="loaderPercent">0%</div>
+    </div>
 
     <div id="worldSwitcher" class="glass">
         <div class="world-dot active" data-world="tlou" data-tooltip="The Last of Us"></div>
@@ -625,7 +483,7 @@
             <div class="track-artist" id="trackArtist">Gustavo Santaolalla</div>
         </div>
         <div class="control-icon">
-            <svg id="iconPlay"  viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="iconPlay" viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
             <svg id="iconPause" viewBox="0 0 24 24" fill="white" width="20" height="20" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </div>
     </div>
@@ -636,6 +494,9 @@
         const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         const isMobile = () => window.innerWidth <= 768;
 
+        // ══════════════════════════════════════
+        //  WORLDS CONFIG
+        // ══════════════════════════════════════
         const worlds = {
             tlou: {
                 label: 'The Last of Us',
@@ -661,6 +522,9 @@
 
         let currentWorld = 'tlou';
 
+        // ══════════════════════════════════════
+        //  DATA
+        // ══════════════════════════════════════
         const projects = [
             { number: '01', status: '', title: 'VR & Artificial Intelligence', desc: '<strong>[L1]</strong> Group presentation on VR and AI.' },
             { number: '02', status: '', title: 'Video Game (UE5)', desc: '<strong>[L1]</strong> 3D puzzle/horror escape room.' },
@@ -693,7 +557,62 @@
             { title: "Lord of the Mysteries", rating: "9/10", status: "En cours", cover: "https://i.pinimg.com/736x/33/58/20/335820b3572deabb95fc2aa667cfb373.jpg" }
         ];
 
-        // Build cards
+        // ══════════════════════════════════════
+        //  IMAGE PRELOADER
+        // ══════════════════════════════════════
+        function collectAllImageUrls() {
+            const urls = new Set();
+
+            // All world backgrounds + disc images
+            Object.values(worlds).forEach(w => {
+                Object.values(w.backgrounds).forEach(url => urls.add(url));
+                urls.add(w.discImage);
+            });
+
+            // All media covers
+            videoGames.forEach(g => urls.add(g.cover));
+            mediaList.forEach(m => urls.add(m.cover));
+
+            // Profile photo
+            urls.add('rayan.jpg');
+
+            return [...urls];
+        }
+
+        function preloadAllImages() {
+            return new Promise((resolve) => {
+                const allUrls = collectAllImageUrls();
+                const total = allUrls.length;
+                let loaded = 0;
+
+                const bar = document.getElementById('loaderBar');
+                const percent = document.getElementById('loaderPercent');
+
+                if (total === 0) { resolve(); return; }
+
+                function onDone() {
+                    loaded++;
+                    const pct = Math.round((loaded / total) * 100);
+                    bar.style.width = pct + '%';
+                    percent.textContent = pct + '%';
+                    if (loaded >= total) resolve();
+                }
+
+                allUrls.forEach(url => {
+                    const img = new Image();
+                    img.onload = onDone;
+                    img.onerror = onDone; // don't block on broken images
+                    img.src = url;
+                });
+
+                // Safety timeout — don't wait more than 15s
+                setTimeout(resolve, 15000);
+            });
+        }
+
+        // ══════════════════════════════════════
+        //  BUILD CARDS
+        // ══════════════════════════════════════
         const projectsGrid = document.getElementById('projectsGrid');
         projects.forEach(p => {
             const card = document.createElement('div');
@@ -718,7 +637,9 @@
         buildCards(videoGames, 'vgGrid');
         buildCards(mediaList, 'mediaGrid');
 
-        // Background engine
+        // ══════════════════════════════════════
+        //  BACKGROUND ENGINE
+        // ══════════════════════════════════════
         const bgBottom = document.getElementById('bgBottom');
         const bgTop = document.getElementById('bgTop');
         const bgContainer = document.getElementById('bgContainer');
@@ -762,7 +683,9 @@
             runTransition(url,onMid);
         }
 
-        // Navigation
+        // ══════════════════════════════════════
+        //  NAVIGATION
+        // ══════════════════════════════════════
         const navLinks = document.querySelectorAll('.nav-menu a');
         const panels = {
             navAbout: document.getElementById('aboutContent'),
@@ -791,9 +714,7 @@
         }
 
         function scrollNavIntoView(link) {
-            if (isMobile()) {
-                link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
+            if (isMobile()) link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
 
         navLinks.forEach(link => {
@@ -812,7 +733,9 @@
 
         heroText.style.opacity = '1';
 
-        // World switcher
+        // ══════════════════════════════════════
+        //  WORLD SWITCHER
+        // ══════════════════════════════════════
         const worldDots = document.querySelectorAll('.world-dot');
         const audio = document.getElementById('myAudio');
         const audioSource = document.getElementById('audioSource');
@@ -845,7 +768,9 @@
 
         worldDots.forEach(d => d.addEventListener('click', () => switchWorld(d.dataset.world)));
 
-        // Audio
+        // ══════════════════════════════════════
+        //  AUDIO
+        // ══════════════════════════════════════
         const musicPlayer = document.getElementById('musicPlayer');
         const iconPlay = document.getElementById('iconPlay');
         const iconPause = document.getElementById('iconPause');
@@ -867,17 +792,9 @@
             updatePlayIcon();
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            discImage.style.backgroundImage = `url('${worlds[currentWorld].discImage}')`;
-            audio.play().then(updatePlayIcon).catch(() => {
-                document.addEventListener('click', function init() {
-                    audio.play().then(updatePlayIcon).catch(()=>{});
-                    document.removeEventListener('click', init);
-                }, { once: true });
-            });
-        });
-
-        // Particles
+        // ══════════════════════════════════════
+        //  PARTICLES
+        // ══════════════════════════════════════
         const canvasEl = document.getElementById('particleCanvas');
         const ctx = canvasEl.getContext('2d');
         function resizeCanvas() { canvasEl.width = window.innerWidth * 1.1; canvasEl.height = window.innerHeight * 1.1; }
@@ -887,14 +804,11 @@
         class Particle {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvasEl.width;
-                this.y = Math.random() * canvasEl.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
-                this.opacity = Math.random() * 0.5 + 0.1;
+                this.x = Math.random() * canvasEl.width; this.y = Math.random() * canvasEl.height;
+                this.size = Math.random() * 2 + 0.5; this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2; this.opacity = Math.random() * 0.5 + 0.1;
             }
-            draw() { ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+            draw() { ctx.fillStyle = `rgba(255,255,255,${this.opacity})`; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
             update() {
                 this.x += this.speedX; this.y += this.speedY;
                 if (this.x<0) this.x=canvasEl.width; if (this.x>canvasEl.width) this.x=0;
@@ -907,11 +821,39 @@
         function animate() { ctx.clearRect(0,0,canvasEl.width,canvasEl.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); }
         animate();
 
-        // Prevent pull-to-refresh / bounce on mobile
+        // Prevent pull-to-refresh
         document.addEventListener('touchmove', (e) => {
             if (e.target.closest('.content-panel') || e.target.closest('.nav-menu')) return;
             e.preventDefault();
         }, { passive: false });
+
+        // ══════════════════════════════════════
+        //  INIT — PRELOAD THEN SHOW
+        // ══════════════════════════════════════
+        async function init() {
+            discImage.style.backgroundImage = `url('${worlds[currentWorld].discImage}')`;
+
+            // Preload all images
+            await preloadAllImages();
+
+            // Hide loading screen
+            document.getElementById('loadingScreen').classList.add('hidden');
+
+            // Start music after user gesture or immediately
+            audio.play().then(updatePlayIcon).catch(() => {
+                document.addEventListener('click', function firstClick() {
+                    audio.play().then(updatePlayIcon).catch(()=>{});
+                    document.removeEventListener('click', firstClick);
+                }, { once: true });
+            });
+        }
+
+        // Run on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
