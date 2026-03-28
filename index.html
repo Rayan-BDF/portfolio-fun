@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +16,8 @@
             --link-padding: 12px 15px;
             --transition-duration: 1200ms;
             --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --theme-accent: rgba(255,255,255,0.3);
+            --theme-glow: none;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -25,80 +28,243 @@
            ██  LOADING SCREEN
            ═══════════════════════════════════════ */
         #loadingScreen {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 9999;
-            background: #050505;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999; background: #050505;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-
-        #loadingScreen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .loader-title {
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.4);
-        }
-
-        .loader-bar-container {
-            width: 200px;
-            height: 2px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .loader-bar {
-            height: 100%;
-            width: 0%;
-            background: white;
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        .loader-percent {
-            font-size: 11px;
-            letter-spacing: 3px;
-            color: rgba(255,255,255,0.3);
-            font-weight: bold;
-        }
+        #loadingScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-title { font-size: 14px; font-weight: 800; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+        .loader-bar-container { width: 200px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .loader-bar { height: 100%; width: 0%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .loader-percent { font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.3); font-weight: bold; }
 
         .background-container {
-            position: absolute;
-            top: -3vh; left: -3vw;
-            width: 106vw; height: 106vh;
-            z-index: 1;
-            will-change: transform;
-            transition: transform 0.2s ease-out;
+            position: absolute; top: -3vh; left: -3vw; width: 106vw; height: 106vh;
+            z-index: 1; will-change: transform; transition: transform 0.2s ease-out;
         }
-
-        .bg-layer {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            will-change: opacity, transform;
-        }
-
+        .bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; will-change: opacity, transform; }
         #bgBottom { opacity: 1; transform: scale(1); }
         #bgTop    { opacity: 0; transform: scale(1.08); }
 
-        #particleCanvas {
-            position: absolute;
-            top: -5vh; left: -5vw;
-            width: 110vw; height: 110vh;
-            z-index: 3;
+        /* ═══════════════════════════════════════
+           ██  WORLD EFFECTS OVERLAY
+           ═══════════════════════════════════════ */
+        #worldEffects {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2; pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+        #worldEffects::before, #worldEffects::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             pointer-events: none;
-            will-change: transform;
+        }
+
+        #glitchOverlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 4; pointer-events: none; opacity: 0;
+        }
+        .g-bar {
+            position: absolute; left: 0; right: 0; height: 2px;
+            background: rgba(0,255,255,0.15); mix-blend-mode: screen;
+        }
+
+        /* ═══════════════════════════════════════
+           ██  TLOU — Spores & Fireflies
+           ═══════════════════════════════════════ */
+        body.world-tlou #worldEffects {
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%);
+        }
+        body.world-tlou #worldEffects::after {
+            background: linear-gradient(to top, rgba(25,45,15,0.18), transparent 40%);
+        }
+        body.world-tlou .glass {
+            border-color: rgba(140,190,90,0.14) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 0 18px rgba(100,160,60,0.025) !important;
+        }
+        body.world-tlou #heroText span {
+            color: rgba(170,210,130,0.1);
+            -webkit-text-stroke-color: rgba(170,210,130,0.4);
+        }
+        body.world-tlou .section-title { text-shadow: 0 0 12px rgba(30,60,15,0.6), 2px 2px 4px rgba(0,0,0,0.8); }
+        body.world-tlou .world-dot.active {
+            border-color: #8cb860 !important; background: #8cb860 !important;
+            box-shadow: 0 0 12px rgba(140,184,96,0.5) !important;
+        }
+        body.world-tlou .nav-menu li a.active { background: rgba(140,190,90,0.12) !important; }
+        body.world-tlou .project-card:hover,
+        body.world-tlou .media-card:hover,
+        body.world-tlou .contact-card:hover { border-color: rgba(140,190,90,0.35) !important; }
+        body.world-tlou #musicPlayer:hover { background: rgba(140,190,90,0.12) !important; }
+
+        /* ═══════════════════════════════════════
+           ██  ELDEN RING — Golden Embers
+           ═══════════════════════════════════════ */
+        body.world-er #worldEffects {
+            background: radial-gradient(ellipse at center bottom, rgba(255,170,40,0.06) 0%, transparent 55%);
+        }
+        body.world-er #worldEffects::after {
+            background: linear-gradient(to top, rgba(60,35,0,0.12), transparent 35%);
+        }
+        body.world-er .glass {
+            border-color: rgba(255,195,70,0.13) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 0 22px rgba(255,180,50,0.025) !important;
+        }
+        body.world-er #heroText span {
+            color: rgba(255,200,80,0.1);
+            -webkit-text-stroke-color: rgba(255,200,80,0.38);
+        }
+        body.world-er .section-title { text-shadow: 0 0 14px rgba(120,70,0,0.5), 2px 2px 4px rgba(0,0,0,0.8); }
+        body.world-er .world-dot.active {
+            border-color: #ffc850 !important; background: #ffc850 !important;
+            box-shadow: 0 0 12px rgba(255,200,80,0.5) !important;
+        }
+        body.world-er .nav-menu li a.active { background: rgba(255,195,70,0.12) !important; }
+        body.world-er .project-card:hover,
+        body.world-er .media-card:hover,
+        body.world-er .contact-card:hover { border-color: rgba(255,195,70,0.35) !important; }
+        body.world-er #musicPlayer:hover { background: rgba(255,195,70,0.1) !important; }
+
+        /* ═══════════════════════════════════════
+           ██  CYBERPUNK — Neon Glitch
+           ═══════════════════════════════════════ */
+        body.world-cb #worldEffects {
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.035) 2px, rgba(0,0,0,0.035) 4px);
+        }
+        body.world-cb #worldEffects::before {
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%);
+        }
+        /* CRT scan bar */
+        body.world-cb #worldEffects::after {
+            top: 0; left: 0; right: 0; bottom: auto;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.07), transparent);
+            animation: crt-scan 3.5s linear infinite;
+        }
+        @keyframes crt-scan {
+            0%   { top: -3px; opacity: 0; }
+            5%   { opacity: 1; }
+            95%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        body.world-cb .glass {
+            border-color: rgba(0,255,255,0.14) !important;
+            box-shadow:
+                0 0 18px rgba(0,255,255,0.04),
+                0 0 40px rgba(255,0,128,0.025),
+                0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+        body.world-cb #heroText span {
+            color: rgba(0,255,255,0.08);
+            -webkit-text-stroke-color: rgba(0,255,255,0.45);
+            text-shadow: 3px 0 rgba(255,0,128,0.25), -3px 0 rgba(0,255,255,0.25);
+            animation: cb-glitch-text 5s infinite;
+        }
+        body.world-cb .section-title {
+            color: rgba(0,255,255,0.92);
+            text-shadow: 0 0 12px rgba(0,255,255,0.4), 0 0 30px rgba(0,255,255,0.15), 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        body.world-cb .world-dot.active {
+            border-color: #00ffff !important; background: #00ffff !important;
+            box-shadow: 0 0 12px rgba(0,255,255,0.55) !important;
+        }
+        body.world-cb .nav-menu li a.active {
+            background: rgba(0,255,255,0.1) !important;
+            text-shadow: 0 0 8px rgba(0,255,255,0.4);
+        }
+        body.world-cb .project-card:hover,
+        body.world-cb .media-card:hover,
+        body.world-cb .contact-card:hover {
+            border-color: rgba(0,255,255,0.35) !important;
+            box-shadow: 0 0 20px rgba(0,255,255,0.08), 0 0 40px rgba(255,0,128,0.04) !important;
+        }
+        body.world-cb #musicPlayer:hover { background: rgba(0,255,255,0.1) !important; }
+        body.world-cb .about-btn:hover { border-color: rgba(0,255,255,0.4) !important; background: rgba(0,255,255,0.08) !important; }
+        body.world-cb .contact-action:hover { border-color: rgba(0,255,255,0.4) !important; background: rgba(0,255,255,0.08) !important; }
+        body.world-cb .project-status { border-color: rgba(0,255,255,0.3) !important; background: rgba(0,255,255,0.08) !important; }
+
+        @keyframes cb-glitch-text {
+            0%, 85%, 100% {
+                transform: none;
+                text-shadow: 3px 0 rgba(255,0,128,0.25), -3px 0 rgba(0,255,255,0.25);
+                clip-path: none;
+            }
+            86% {
+                transform: translateX(-4px) skewX(-0.8deg);
+                text-shadow: 5px 0 rgba(255,0,128,0.5), -5px 0 rgba(0,255,255,0.5);
+            }
+            87% {
+                transform: translateX(4px) skewX(0.8deg);
+                clip-path: inset(25% 0 45% 0);
+            }
+            88% {
+                transform: translateX(-2px);
+                clip-path: inset(60% 0 8% 0);
+                text-shadow: -4px 0 rgba(255,0,128,0.7), 4px 0 rgba(0,255,255,0.7);
+            }
+            89% {
+                transform: translateX(2px) skewX(-0.5deg);
+                clip-path: inset(10% 0 55% 0);
+            }
+            90% {
+                transform: none;
+                clip-path: none;
+            }
+        }
+
+        /* Screen-wide glitch flash */
+        body.world-cb.glitch-active #glitchOverlay { opacity: 1; }
+        body.world-cb.glitch-active #bgBottom,
+        body.world-cb.glitch-active #bgTop {
+            filter: saturate(1.6) hue-rotate(12deg) brightness(1.08);
+        }
+        body.world-cb.glitch-active .content-panel.visible {
+            transform: translateX(3px) !important;
+        }
+
+        /* ═══════════════════════════════════════
+           ██  CLAIR OBSCUR — Artistic / Painterly
+           ═══════════════════════════════════════ */
+        body.world-co #worldEffects {
+            background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.55) 100%);
+        }
+        body.world-co #worldEffects::after {
+            background: linear-gradient(to bottom, rgba(20,10,40,0.1), transparent 25%),
+                        linear-gradient(to top, rgba(20,10,40,0.12), transparent 20%);
+        }
+        body.world-co .glass {
+            border-color: rgba(175,155,215,0.14) !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 0 20px rgba(175,155,215,0.025) !important;
+        }
+        body.world-co #heroText span {
+            color: rgba(195,185,225,0.1);
+            -webkit-text-stroke-color: rgba(195,185,225,0.38);
+            font-style: italic;
+        }
+        body.world-co .section-title {
+            text-shadow: 0 0 14px rgba(50,25,80,0.5), 2px 2px 4px rgba(0,0,0,0.8);
+            font-style: italic;
+        }
+        body.world-co .world-dot.active {
+            border-color: #c4ade8 !important; background: #c4ade8 !important;
+            box-shadow: 0 0 12px rgba(196,173,232,0.5) !important;
+        }
+        body.world-co .nav-menu li a.active { background: rgba(175,155,215,0.12) !important; }
+        body.world-co .nav-menu li a { font-style: italic; }
+        body.world-co .project-card:hover,
+        body.world-co .media-card:hover,
+        body.world-co .contact-card:hover { border-color: rgba(175,155,215,0.35) !important; }
+        body.world-co #musicPlayer:hover { background: rgba(175,155,215,0.1) !important; }
+        body.world-co .about-name { font-style: italic; }
+        body.world-co .project-title { font-style: italic; }
+
+        /* ═══════════════════════════════════════ */
+
+        #particleCanvas {
+            position: absolute; top: -5vh; left: -5vw; width: 110vw; height: 110vh;
+            z-index: 3; pointer-events: none; will-change: transform;
         }
 
         .glass {
@@ -112,7 +278,6 @@
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             z-index: 30; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 30px;
         }
-
         .world-dot {
             width: 14px; height: 14px; border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.3); background: transparent;
@@ -134,7 +299,6 @@
             width: var(--sidebar-width); padding: var(--sidebar-padding);
             height: fit-content; border-radius: 30px; display: flex; flex-direction: column; z-index: 20;
         }
-
         .nav-menu { display: flex; flex-direction: column; gap: 8px; list-style: none; }
         .nav-menu li a {
             color: white; text-decoration: none; font-size: 13px; text-transform: uppercase;
@@ -152,13 +316,13 @@
             display: block; font-weight: 800; font-size: clamp(38px, 5.5vw, 72px);
             letter-spacing: 6px; text-transform: uppercase; line-height: 1.05;
             color: rgba(255,255,255,0.15); -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+            transition: color 0.6s ease, -webkit-text-stroke-color 0.6s ease;
         }
 
         .ui-wrapper {
             position: absolute; top: 0; left: 280px; width: calc(100% - 280px); height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 10;
         }
-
         .content-panel {
             width: 95%; max-width: 1400px; height: auto;
             display: flex; flex-direction: column; padding: 25px 30px;
@@ -175,6 +339,7 @@
             font-size: 24px; font-weight: 800; letter-spacing: 4px;
             text-transform: uppercase; margin-bottom: 20px; text-align: center;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            transition: color 0.4s ease, text-shadow 0.4s ease;
         }
 
         .about-layout { display: flex; gap: 40px; align-items: center; width: 100%; }
@@ -182,7 +347,7 @@
         .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
         .about-content { flex: 1; display: flex; flex-direction: column; gap: 14px; }
         .about-greeting { font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
-        .about-name { font-size: 48px; font-weight: 800; letter-spacing: 6px; line-height: 1; color: rgba(255,255,255,0.01); -webkit-text-stroke: 1.5px rgba(255,255,255,0.6); text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .about-name { font-size: 48px; font-weight: 800; letter-spacing: 6px; line-height: 1; color: rgba(255,255,255,0.01); -webkit-text-stroke: 1.5px rgba(255,255,255,0.6); text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: all 0.4s ease; }
         .about-bio { display: flex; flex-direction: column; gap: 10px; user-select: text; }
         .about-bio p { font-size: 16px; line-height: 1.7; color: white; letter-spacing: 0.3px; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); }
         .about-bio p:first-child { font-size: 17px; font-weight: bold; letter-spacing: 1px; }
@@ -197,13 +362,13 @@
         .project-card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 15px; padding: 18px; display: flex; flex-direction: column; gap: 10px;
-            transition: transform 0.3s ease, background 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .project-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
         .project-header { display: flex; justify-content: space-between; align-items: center; }
         .project-number { font-size: 28px; font-weight: 300; opacity: 0.4; line-height: 1; font-family: 'Courier New', monospace; }
-        .project-status { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; }
-        .project-title { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .project-status { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; transition: all 0.3s ease; }
+        .project-title { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); transition: font-style 0.3s ease; }
         .project-desc { font-size: 13px; opacity: 0.9; line-height: 1.6; flex-grow: 1; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
         .project-desc strong { color: #fff; font-weight: bold; opacity: 1; }
 
@@ -235,7 +400,7 @@
         .contact-card {
             flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px; padding: 30px; display: flex; flex-direction: column; align-items: center;
-            gap: 15px; transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+            gap: 15px; transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             text-decoration: none; color: white; cursor: pointer;
         }
         .contact-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
@@ -252,7 +417,7 @@
             padding: 5px 15px 5px 5px;
             display: flex; align-items: center; gap: 12px;
             cursor: pointer; z-index: 20;
-            transition: transform 0.2s ease, background 0.2s ease;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
         #musicPlayer:hover { transform: scale(1.02); background: rgba(255,255,255,0.15); }
         .disc-container { width: 50px; height: 50px; flex-shrink: 0; }
@@ -264,6 +429,9 @@
         .control-icon { display: flex; justify-content: center; align-items: center; width: 24px; height: 24px; opacity: 0.8; flex-shrink: 0; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+        /* ═══════════════════════════════════════
+           ██  MOBILE
+           ═══════════════════════════════════════ */
         @media screen and (max-width: 768px) {
             #sidebar {
                 position: fixed !important; top: auto !important; bottom: 0 !important;
@@ -341,6 +509,11 @@
             #worldSwitcher { top: 12px !important; padding: 6px 14px !important; gap: 6px !important; }
             .world-dot { width: 12px !important; height: 12px !important; }
             .world-separator { height: 12px !important; margin: 0 2px !important; }
+
+            /* Reduce CB scanline intensity on mobile */
+            body.world-cb #worldEffects {
+                background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px) !important;
+            }
         }
 
         @media screen and (max-width: 400px) {
@@ -368,7 +541,7 @@
         }
     </style>
 </head>
-<body>
+<body class="world-er">
 
     <div id="loadingScreen">
         <div class="loader-title">Loading</div>
@@ -391,6 +564,18 @@
     <div class="background-container" id="bgContainer">
         <div id="bgBottom" class="bg-layer" style="background-image: url('erhome.png');"></div>
         <div id="bgTop" class="bg-layer"></div>
+    </div>
+
+    <!-- World-specific visual overlays -->
+    <div id="worldEffects"></div>
+
+    <!-- Cyberpunk glitch flash overlay -->
+    <div id="glitchOverlay">
+        <div class="g-bar"></div>
+        <div class="g-bar"></div>
+        <div class="g-bar"></div>
+        <div class="g-bar"></div>
+        <div class="g-bar"></div>
     </div>
 
     <canvas id="particleCanvas"></canvas>
@@ -517,6 +702,57 @@
 
         let currentWorld = 'er';
 
+        /* ═══════════════════════════════════════
+           ██  WORLD-SPECIFIC PARTICLE CONFIG
+           ═══════════════════════════════════════ */
+        const worldParticleConfig = {
+            tlou: {
+                colors: ['255,255,150', '180,255,130', '255,210,90', '220,255,160'],
+                count: isTouchDevice ? 65 : 160,
+                sizeMin: 1.2, sizeMax: 4.5,
+                speed: 0.25,
+                upDrift: true,
+                pulse: true,
+                wobble: true,
+                glow: true,
+                shape: 'circle'
+            },
+            er: {
+                colors: ['255,190,50', '255,155,30', '255,220,100', '255,245,190'],
+                count: isTouchDevice ? 90 : 280,
+                sizeMin: 0.4, sizeMax: 2.8,
+                speed: 0.35,
+                upDrift: true,
+                pulse: false,
+                wobble: true,
+                glow: true,
+                shape: 'circle'
+            },
+            cb: {
+                colors: ['0,255,255', '255,0,128', '0,180,255', '255,255,255', '180,0,255'],
+                count: isTouchDevice ? 110 : 380,
+                sizeMin: 0.3, sizeMax: 1.8,
+                speed: 0.9,
+                upDrift: false,
+                pulse: false,
+                wobble: false,
+                glow: false,
+                shape: 'square',
+                digital: true
+            },
+            co: {
+                colors: ['255,255,255', '200,190,230', '175,160,210', '230,220,250', '160,140,200'],
+                count: isTouchDevice ? 70 : 190,
+                sizeMin: 0.5, sizeMax: 3.5,
+                speed: 0.18,
+                upDrift: false,
+                pulse: true,
+                wobble: true,
+                glow: true,
+                shape: 'circle'
+            }
+        };
+
         const projects = [
             { number: '01', status: '', title: 'VR & Artificial Intelligence', desc: '<strong>[L1]</strong> Group presentation on VR and AI.' },
             { number: '02', status: '', title: 'Video Game (UE5)', desc: '<strong>[L1]</strong> 3D puzzle/horror escape room.' },
@@ -566,12 +802,9 @@
                 const allUrls = collectAllImageUrls();
                 const total = allUrls.length;
                 let loaded = 0;
-
                 const bar = document.getElementById('loaderBar');
                 const percent = document.getElementById('loaderPercent');
-
                 if (total === 0) { resolve(); return; }
-
                 function onDone() {
                     loaded++;
                     const pct = Math.round((loaded / total) * 100);
@@ -579,14 +812,12 @@
                     percent.textContent = pct + '%';
                     if (loaded >= total) resolve();
                 }
-
                 allUrls.forEach(url => {
                     const img = new Image();
                     img.onload = onDone;
                     img.onerror = onDone;
                     img.src = url;
                 });
-
                 setTimeout(resolve, 15000);
             });
         }
@@ -637,7 +868,7 @@
 
         function runTransition(url, onMid) {
             running = true; pendingUrl = null; pendingCb = null;
-            resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:`url('${url}')`});
+            resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:`url('${url}')`, filter:'none'});
             requestAnimationFrame(() => {
                 const e = 'cubic-bezier(0.25,0.46,0.45,0.94)';
                 const t = `opacity ${DURATION}ms ${e}, transform ${DURATION}ms ${e}`;
@@ -645,8 +876,8 @@
                 applyStyles(bgTop, {transition:t, opacity:'1', transform:'scale(1)'});
                 if (onMid) setTimeout(onMid, DURATION / 2);
                 setTimeout(() => {
-                    resetLayerInstant(bgBottom, {opacity:'1', transform:'scale(1)', backgroundImage:`url('${url}')`});
-                    resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:''});
+                    resetLayerInstant(bgBottom, {opacity:'1', transform:'scale(1)', backgroundImage:`url('${url}')`, filter:'none'});
+                    resetLayerInstant(bgTop, {opacity:'0', transform:'scale(1.08)', backgroundImage:'', filter:'none'});
                     running = false;
                     if (pendingUrl) runTransition(pendingUrl, pendingCb);
                 }, DURATION);
@@ -712,10 +943,59 @@
         const trackNameEl = document.getElementById('trackName');
         const trackArtistEl = document.getElementById('trackArtist');
 
+        /* ═══════════════════════════════════════
+           ██  CYBERPUNK GLITCH SYSTEM
+           ═══════════════════════════════════════ */
+        let glitchTimeout = null;
+        const glitchBars = document.querySelectorAll('.g-bar');
+
+        function randomizeGlitchBars() {
+            glitchBars.forEach(bar => {
+                bar.style.top = (Math.random() * 100) + '%';
+                bar.style.height = (1 + Math.random() * 5) + 'px';
+                bar.style.left = (Math.random() * 15) + '%';
+                bar.style.right = (Math.random() * 15) + '%';
+                bar.style.background = Math.random() > 0.5
+                    ? `rgba(0,255,255,${0.05 + Math.random() * 0.12})`
+                    : `rgba(255,0,128,${0.04 + Math.random() * 0.1})`;
+            });
+        }
+
+        function doGlitch() {
+            if (currentWorld !== 'cb') return;
+            randomizeGlitchBars();
+            document.body.classList.add('glitch-active');
+            setTimeout(() => {
+                document.body.classList.remove('glitch-active');
+                scheduleGlitch();
+            }, 80 + Math.random() * 140);
+        }
+
+        function scheduleGlitch() {
+            if (currentWorld !== 'cb') return;
+            glitchTimeout = setTimeout(doGlitch, 2500 + Math.random() * 6000);
+        }
+
+        function startGlitchLoop() {
+            stopGlitchLoop();
+            scheduleGlitch();
+        }
+
+        function stopGlitchLoop() {
+            if (glitchTimeout) { clearTimeout(glitchTimeout); glitchTimeout = null; }
+            document.body.classList.remove('glitch-active');
+        }
+
+        /* ═══════════════════════════════════════
+           ██  WORLD SWITCHING
+           ═══════════════════════════════════════ */
         function switchWorld(key) {
             if (key === currentWorld) return;
             currentWorld = key;
             const w = worlds[key];
+
+            // Body class for themed CSS
+            document.body.className = 'world-' + key;
 
             worldDots.forEach(d => d.classList.remove('active'));
             document.querySelector(`[data-world="${key}"]`).classList.add('active');
@@ -730,8 +1010,7 @@
             discImage.style.backgroundImage = `url('${w.discImage}')`;
 
             hideAll();
-            pendingCb = null;
-            pendingUrl = null;
+            pendingCb = null; pendingUrl = null;
 
             const bgUrl = w.backgrounds[currentPage] || w.backgrounds.navHome;
 
@@ -742,6 +1021,13 @@
             } else {
                 changeBackground(bgUrl);
             }
+
+            // Reinit particles with new world config
+            reinitParticles();
+
+            // Handle cyberpunk glitch
+            stopGlitchLoop();
+            if (key === 'cb') startGlitchLoop();
         }
 
         worldDots.forEach(d => d.addEventListener('click', () => switchWorld(d.dataset.world)));
@@ -770,6 +1056,9 @@
             updatePlayIcon();
         });
 
+        /* ═══════════════════════════════════════
+           ██  THEMED PARTICLE SYSTEM
+           ═══════════════════════════════════════ */
         const canvasEl = document.getElementById('particleCanvas');
         const ctx = canvasEl.getContext('2d');
 
@@ -777,44 +1066,156 @@
             canvasEl.width = window.innerWidth * 1.1;
             canvasEl.height = window.innerHeight * 1.1;
         }
-
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
         class Particle {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvasEl.width;
-                this.y = Math.random() * canvasEl.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
-                this.opacity = Math.random() * 0.5 + 0.1;
+            constructor() { this.reset(true); }
+
+            reset(initial) {
+                const cfg = worldParticleConfig[currentWorld];
+                this.size = cfg.sizeMin + Math.random() * (cfg.sizeMax - cfg.sizeMin);
+                this.color = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+                this.baseOpacity = Math.random() * 0.5 + 0.1;
+                this.opacity = this.baseOpacity;
+                this.shape = cfg.shape;
+                this.glowEnabled = cfg.glow && this.size > 1.5;
+
+                // Position
+                if (initial) {
+                    this.x = Math.random() * canvasEl.width;
+                    this.y = Math.random() * canvasEl.height;
+                } else if (cfg.upDrift) {
+                    this.x = Math.random() * canvasEl.width;
+                    this.y = canvasEl.height + 10;
+                } else {
+                    // Respawn at a random edge
+                    const edge = Math.floor(Math.random() * 4);
+                    switch(edge) {
+                        case 0: this.x = Math.random() * canvasEl.width; this.y = -5; break;
+                        case 1: this.x = canvasEl.width + 5; this.y = Math.random() * canvasEl.height; break;
+                        case 2: this.x = Math.random() * canvasEl.width; this.y = canvasEl.height + 5; break;
+                        case 3: this.x = -5; this.y = Math.random() * canvasEl.height; break;
+                    }
+                }
+
+                // Speed
+                if (cfg.upDrift) {
+                    this.speedX = (Math.random() - 0.5) * cfg.speed * 0.6;
+                    this.speedY = -(Math.random() * cfg.speed + 0.15);
+                } else {
+                    this.speedX = (Math.random() - 0.5) * cfg.speed;
+                    this.speedY = (Math.random() - 0.5) * cfg.speed;
+                }
+
+                // Wobble (organic sway)
+                this.wobblePhase = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = 0.008 + Math.random() * 0.02;
+                this.wobbleAmp = cfg.wobble ? (0.3 + Math.random() * 0.8) : 0;
+
+                // Pulse (opacity breathing)
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.pulseSpeed = 0.008 + Math.random() * 0.025;
+                this.pulseEnabled = cfg.pulse;
+
+                // Digital direction change timer (cyberpunk)
+                this.digitalTimer = cfg.digital ? (30 + Math.random() * 120) : 0;
+                this.isDigital = cfg.digital || false;
             }
-            draw() {
-                ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+
             update() {
+                const cfg = worldParticleConfig[currentWorld];
+
+                // Movement
                 this.x += this.speedX;
                 this.y += this.speedY;
-                if (this.x < 0) this.x = canvasEl.width;
-                if (this.x > canvasEl.width) this.x = 0;
-                if (this.y < 0) this.y = canvasEl.height;
-                if (this.y > canvasEl.height) this.y = 0;
+
+                // Wobble
+                if (this.wobbleAmp > 0) {
+                    this.wobblePhase += this.wobbleSpeed;
+                    this.x += Math.sin(this.wobblePhase) * this.wobbleAmp * 0.15;
+                }
+
+                // Pulse opacity
+                if (this.pulseEnabled) {
+                    this.pulsePhase += this.pulseSpeed;
+                    this.opacity = this.baseOpacity * (0.25 + 0.75 * Math.abs(Math.sin(this.pulsePhase)));
+                }
+
+                // Ember fade (fade as they rise)
+                if (cfg.upDrift && currentWorld === 'er') {
+                    this.opacity = this.baseOpacity * Math.max(0.05, this.y / canvasEl.height);
+                }
+
+                // Digital direction changes (cyberpunk)
+                if (this.isDigital) {
+                    this.digitalTimer--;
+                    if (this.digitalTimer <= 0) {
+                        this.speedX = (Math.random() - 0.5) * cfg.speed;
+                        this.speedY = (Math.random() - 0.5) * cfg.speed;
+                        this.digitalTimer = 30 + Math.random() * 120;
+                    }
+                }
+
+                // Bounds
+                const w = canvasEl.width, h = canvasEl.height;
+                if (cfg.upDrift) {
+                    if (this.y < -10) this.reset(false);
+                    if (this.x < -10) this.x = w + 10;
+                    if (this.x > w + 10) this.x = -10;
+                } else {
+                    if (this.x < -10) this.x = w + 10;
+                    if (this.x > w + 10) this.x = -10;
+                    if (this.y < -10) this.y = h + 10;
+                    if (this.y > h + 10) this.y = -10;
+                }
+            }
+
+            draw() {
+                const alpha = Math.max(0, Math.min(1, this.opacity));
+                ctx.fillStyle = `rgba(${this.color},${alpha})`;
+
+                if (this.glowEnabled) {
+                    ctx.shadowBlur = this.size * 4;
+                    ctx.shadowColor = `rgba(${this.color},${alpha * 0.4})`;
+                }
+
+                if (this.shape === 'square') {
+                    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if (this.glowEnabled) {
+                    ctx.shadowBlur = 0;
+                    ctx.shadowColor = 'transparent';
+                }
             }
         }
 
-        const count = isTouchDevice ? 120 : 400;
-        const particles = Array.from({ length: count }, () => new Particle());
+        let particles = [];
+
+        function reinitParticles() {
+            const cfg = worldParticleConfig[currentWorld];
+            particles = [];
+            for (let i = 0; i < cfg.count; i++) {
+                particles.push(new Particle());
+            }
+        }
 
         function animate() {
             ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-            particles.forEach(p => { p.update(); p.draw(); });
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
             requestAnimationFrame(animate);
         }
+
+        // Initialize particles for default world
+        reinitParticles();
         animate();
 
         document.addEventListener('touchmove', (e) => {
